@@ -17,3 +17,8 @@ architecture is illustrated below.
 .. _fig-graph-service-architecture:
 
 .. graphviz:: /_static/graphviz/graph_service_architecture.dot
+
+
+Sequence diagram of Graph Services API calls.
+"""""""""""""""""""""""""""""""""""""""""""""
+.. uml:: ../../_static/uml/graph-services.sequence.uml

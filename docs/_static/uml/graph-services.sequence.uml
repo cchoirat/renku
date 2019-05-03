@@ -1,0 +1,38 @@
+    @startuml
+    autonumber
+    hide footbox
+    skinparam shadowing false
+
+    participant Client
+    participant "Webhook\nService" as Webhook
+    participant GitLab
+    participant "Tokens\nRepository" as Tokens
+    participant "Triples\nGenerator" as Triples
+    participant "Event\nLog" as Log
+
+    == Webhook validation ==
+    Client->Webhook: POST /projects/:id/webhooks
+    activate Webhook
+    Webhook->GitLab: find-project-visibility
+    activate GitLab
+    GitLab->Webhook: project-visibility
+    deactivate GitLab
+    Webhook->Tokens: find-project-tokens (only if sent token is invalid)
+    activate Tokens
+    Tokens->Webhook: project-token
+    deactivate Tokens
+    Webhook->GitLab: find-existing-project-hooks
+    activate GitLab
+    GitLab->Webhook: project-hooks
+    deactivate GitLab
+    Webhook->Tokens: associate-new-access-token (if hook exists and given token is valid)
+    activate Tokens
+    Tokens->Webhook: OK
+    deactivate Tokens
+    Webhook->Tokens: delete-access-token (if hook does not exist)
+    activate Tokens
+    Tokens->Webhook: OK
+    deactivate Tokens
+    Webhook->Client: OK if hook exists or NOT_FOUND otherwise
+
+    @enduml
